@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Лига Донбасса{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron text-white p-5 rounded mb-4 position-relative text-center"
+             style="
+                    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                                url('{{ header_image }}') no-repeat center 25%;
+                    background-size: cover;
+                    min-height: 400px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;">
+            <div class="position-relative z-2">
+                <p class="lead fs-6 fs-md-5 mb-5 mb-md-6">
+    <span class="badge bg-warning text-dark fs-6 fs-md-5 px-3 px-md-4 py-2">
+        <i class="fas fa-clock me-2"></i>Рейтинг скоро будет запущен!
+    </span>
+                </p>
+                <p class="fs-5 mb-0 opacity-75">
+                    Мы работаем над созданием самой полной базы спортсменов и турниров
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Информационный блок -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="alert alert-info border-0 shadow-sm p-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle fa-2x text-info"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h4 class="alert-heading mb-2">Рейтинговая система в разработке</h4>
+                    <p class="mb-0">
+                        В ближайшее время мы запустим рейтинговую систему для спортсменов Донбасса.
+                        Следите за обновлениями!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Топ-10 спортсменов -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white py-3">
+                <h2 class="mb-0 h4">
+                    <i class="fas fa-crown me-2"></i>Топ-10 спортсменов
+                </h2>
+            </div>
+            <div class="card-body p-4">
+
+                {% include "components/search.html" %}
+
+                <div class="alert alert-light border mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-users text-primary me-3 fa-lg"></i>
+                        <div>
+                            <h5 class="mb-1">База спортсменов</h5>
+                            <p class="mb-0 text-muted">Здесь представлены ведущие спортсмены региона</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "components/athletes_list.html" %}
+
+                <!-- Ссылка на полный список -->
+                <div class="text-center mt-4 pt-3 border-top">
+                    <a class="btn btn-primary btn-lg px-5 py-3"
+                       href="/athletes"
+                       hx-get="#"
+                       hx-target="main"
+                       hx-push-url="true">
+                        <i class="fas fa-list me-2"></i> Полный список спортсменов
+                    </a>
+                    <p class="text-muted mt-2 small">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        Рейтинговая система начнет работать после полного запуска платформы
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Блок "Скоро появится" -->
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm text-center">
+            <div class="card-body p-4">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-chart-line fa-2x text-primary"></i>
+                </div>
+                <h4 class="card-title">Рейтинг</h4>
+                <p class="card-text text-muted">
+                    Объективная и справедливая система рейтинга на основе результатов турниров
+                </p>
+                <span class="badge bg-warning text-dark">Скоро</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm text-center">
+            <div class="card-body p-4">
+                <div class="rounded-circle bg-success bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-calendar-alt fa-2x text-success"></i>
+                </div>
+                <h4 class="card-title">Турниры</h4>
+                <p class="card-text text-muted">
+                    Расписание и результаты соревнований
+                </p>
+                <span class="badge bg-info">В планах</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm text-center">
+            <div class="card-body p-4">
+                <div class="rounded-circle bg-purple bg-opacity-10 p-4 d-inline-flex mb-3">
+                    <i class="fas fa-medal fa-2x text-purple"></i>
+                </div>
+                <h4 class="card-title">Статистика</h4>
+                <p class="card-text text-muted">
+                    Детальная статистика по каждому спортсмену
+                </p>
+                <span class="badge bg-secondary">В разработке</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Прошедшие турниры -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="bg-light rounded p-5 text-center">
+            <h3 class="mb-4">Прошедшие турниры Лиги Донбасса</h3>
+            <p class="lead mb-5">Посмотрите результаты наших недавних соревнований</p>
+
+            <div class="row justify-content-center">
+                <div class="col-md-5 mb-4">
+                    <a href="https://shakasports.com/event/1689" target="_blank" class="text-decoration-none">
+                        <div class="card border-0 shadow-lg overflow-hidden">
+                            <div class="card-img-top"
+                                 style="background: url('{{ ligadonbassa_image_1 }}') no-repeat center center; background-size: cover; height: 300px;">
+                            </div>
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-dark mb-2">Турнир Лиги Донбасса</h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-calendar-day me-1"></i>25 октября 2025 года
+                                </p>
+                                <span class="badge bg-primary px-3 py-2">
+                    <i class="fas fa-external-link-alt me-1"></i>Посмотреть результаты
+                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-5 mb-4">
+                    <a href="https://shakasports.com/event/1689" target="_blank" class="text-decoration-none">
+                        <div class="card border-0 shadow-lg overflow-hidden">
+                            <div class="card-img-top"
+                                 style="background: url('{{ ligadonbassa_image_2 }}') no-repeat center center; background-size: cover; height: 300px;">
+                            </div>
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-dark mb-2">Турнир Лиги Донбасса</h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-calendar-day me-1"></i>20 декабря 2025 года
+                                </p>
+                                <span class="badge bg-primary px-3 py-2">
+                    <i class="fas fa-external-link-alt me-1"></i>Посмотреть результаты
+                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            <div class="mt-5 pt-3">
+                <p class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Прошлые и следующие турниры будут учитываться в рейтинговой системе
+                </p>
+                <div class="d-inline-flex align-items-center bg-warning bg-opacity-10 px-4 py-3 rounded-pill">
+                    <i class="fas fa-clock text-warning me-2"></i>
+                    <span class="fw-medium">Рейтинговая система запускается в 2026 году</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+    }
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    .card-img-top {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+</style>
+
+{% endblock %}

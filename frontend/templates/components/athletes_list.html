@@ -1,0 +1,41 @@
+{# athletes_list.html #}
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+    <tr>
+      <th>Место</th>
+      <th>Имя и фамилия</th>
+      <th>Категория</th>
+      <th>Академия</th>
+      <th>Аффилиация</th>
+      <th>Очки</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for athlete in athletes %}
+    <tr>
+      <td>
+        <div class="ranking-badge {% if athlete.place == 1 %}ranking-1{% elif athlete.place == 2 %}ranking-2{% elif athlete.place == 3 %}ranking-3{% else %}ranking-other{% endif %}">
+          {{ athlete.place }}
+        </div>
+      </td>
+      <td>
+        <a href="/athletes/{{ athlete.id }}"
+           class="text-decoration-none fw-bold"
+           hx-get="/athletes/{{ athlete.id }}"
+           hx-target="main"
+           hx-push-url="true">
+          {{ athlete.fullname }}
+        </a>
+      </td>
+      <td>{{ athlete.category }}</td>
+      <td>{{ athlete.academy }}</td>
+      <td>{{ athlete.affiliation }}</td>
+      <td>
+        <span class="badge bg-primary">{{ athlete.points }}</span>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>

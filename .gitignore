@@ -1,0 +1,9 @@
+.gigaide/
+.env.local
+.env.docker
+.env
+.idea/
+ligadonbassa.iml
+venv
+__pycache__/
+

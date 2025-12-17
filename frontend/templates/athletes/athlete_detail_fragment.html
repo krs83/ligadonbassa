@@ -1,0 +1,144 @@
+<!-- athlete_detail_fragment.html - только контент для HTMX -->
+<div class="container">
+  <!-- Кнопка назад -->
+  <div class="mb-4">
+    <a class="btn btn-outline-secondary" href="/athletes" hx-boost="false">
+      <i class="fas fa-arrow-left"></i> Назад к списку
+    </a>
+  </div>
+
+  <!-- Карточка атлета -->
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h3 class="card-title mb-0">
+        <i class="fas fa-user"></i> Профиль спортсмена
+      </h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-8">
+          <h2 class="text-primary">{{ athlete.fullname }}</h2>
+
+          <div class="row mt-4">
+            <div class="col-sm-6">
+              <h5><i class="fas fa-trophy"></i> Рейтинг</h5>
+              <div class="ranking-badge-large
+                                {% if athlete.place == 1 %}ranking-1
+                                {% elif athlete.place == 2 %}ranking-2
+                                {% elif athlete.place == 3 %}ranking-3
+                                {% else %}ranking-other{% endif %}">
+                {{ athlete.place }} место
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <h5><i class="fas fa-star"></i> Очки</h5>
+              <div class="points-display">
+                <span class="badge bg-primary fs-4">{{ athlete.points }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-sm-6">
+              <h5><i class="fas fa-city"></i> Академия</h5>
+              <p class="fs-5">{{ athlete.academy }}</p>
+            </div>
+
+            <div class="col-sm-6">
+              <h5><i class="fas fa-map-marker-alt"></i> Аффилиация</h5>
+              <p class="fs-5">{{ athlete.affiliation }}</p>
+            </div>
+          </div>
+
+          {% if athlete.birth %}
+          <div class="row mt-4">
+            <div class="col-12">
+              <h5><i class="fas fa-birthday-cake"></i> Категория</h5>
+              <p class="fs-5">{{ athlete.category }}</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-4 text-center">
+          <div class="athlete-avatar">
+            <i class="fas fa-user-circle fa-8x text-secondary"></i>
+          </div>
+          <div class="mt-3">
+            <span class="badge bg-info fs-6">ID: {{ athlete.id }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- История выступлений - турниры -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">
+        <i class="fas fa-history"></i> История выступлений
+      </h5>
+    </div>
+    <div class="card-body">
+      {% if athlete.tournaments %}
+      <div class="tournaments-timeline">
+        {% for tournament in athlete.tournaments %}
+        <div class="tournament-item">
+          <div class="tournament-header">
+            <div class="tournament-title">
+              <h6 class="mb-1">{{ tournament.title }}</h6>
+              {% if tournament.smoothcomp_date %}
+              <small class="text-muted">
+                <i class="fas fa-calendar-alt"></i>
+                {{ tournament.smoothcomp_date.strftime('%d.%m.%Y') }}
+              </small>
+              {% endif %}
+            </div>
+            <div class="tournament-id">
+              <span class="badge bg-secondary">ID: {{ tournament.smoothcomp_id }}</span>
+            </div>
+          </div>
+        </div>
+        {% if not loop.last %}
+        <div class="timeline-connector"></div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Статистика -->
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card text-center bg-light">
+            <div class="card-body">
+              <h3 class="text-primary">{{ athlete.tournaments|length }}</h3>
+              <p class="text-muted mb-0">Всего турниров</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center bg-light">
+            <div class="card-body">
+              <h3 class="text-success">{{ athlete.points }}</h3>
+              <p class="text-muted mb-0">Всего очков</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center bg-light">
+            <div class="card-body">
+              <h3 class="text-info">{{ athlete.place }}</h3>
+              <p class="text-muted mb-0">Текущее место</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="text-center py-4">
+        <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+        <p class="text-muted mb-0">Спортсмен еще не участвовал в турнирах</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

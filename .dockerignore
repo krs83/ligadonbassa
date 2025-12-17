@@ -1,0 +1,5 @@
+.gigaide
+.idea
+Dockerfile
+.env
+docker-compose.yml
