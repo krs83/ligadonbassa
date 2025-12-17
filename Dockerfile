@@ -1,6 +1,6 @@
 FROM python:3.13-slim
 
-WORKDIR /app
+WORKDIR /app-ligadonbassa
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -9,7 +9,7 @@ COPY --chown=1000:1000 . .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-USER 1000
+USER 1001
 
 EXPOSE 8000
 
