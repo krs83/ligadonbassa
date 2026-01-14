@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -31,6 +32,10 @@ class Settings(BaseSettings):
     HEADER_IMAGE: str = "/static/images/ligadonbassa.jpg"
     LIGADONBASSA_IMAGE_1: str = "/static/images/ligadonbassa_25_10_25.jpg"
     LIGADONBASSA_IMAGE_2: str = "/static/images/ligadonbassa_20_12_25.png"
+
+    @property
+    def current_year(self) -> int:
+        return datetime.now().year
 
     #Для локально разработки .env.local, для докера - .env.docker
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
