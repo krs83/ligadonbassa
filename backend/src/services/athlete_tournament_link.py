@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 
 from backend.src.exceptions.athlete_tournament_link import AthleteTournamentLinkIntegrityException
@@ -9,21 +10,11 @@ from backend.src.services.base import BaseService
 
 class AthleteTournamentLinkService(BaseService):
 
-    # async def get_tournaments(self, offset: int, limit: int) -> list[Tournament]:
-    #     """Получение всех турниров из БД согласно выборке"""
-    #     self.logger.info("Получен список всех турниров из БД согласно выборке")
-    #
-    #     return await self.repository.tournaments.get_tournaments(offset=offset, limit=limit)
-    #
-    # async def get_tournament(self, tournament_id: int) -> Tournament:
-    #     """Получение конкретного турнира по ID"""
-    #
-    #     tournament =  await self.repository.tournaments.get_tournament_by_id(tournament_id)
-    #     if not tournament:
-    #         self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(tournament_id))
-    #         raise TournamentNotFoundException(tournament_id)
-    #     self.logger.info(f"Турнир с ID №{tournament_id} успешно получен")
-    #     return tournament
+    async def get_athlete_tournament_links(self, offset: int, limit: int) -> list[AthleteTournamentLink]:
+        """Получение всех связей спортсменов-турниров из БД согласно выборке"""
+        self.logger.info("Получен список всех связей спортсменов-турниров из БД согласно выборке")
+
+        return await self.repository.athlete_tournament_links.get_athlete_tournament_links(offset, limit)
 
     async def create_athlete_tournament_link(self,
                                              athlete_tournament_link_data:
@@ -42,22 +33,6 @@ class AthleteTournamentLinkService(BaseService):
 
         return AthleteTournamentLinkResponse.model_validate(link)
 
-
-    # async def part_update_tournament(self, tournament_id: int, tournament_data: TournamentUpdate) -> TournamentResponse:
-    #     """Частичное или полное обновление данных о турнире по ID"""
-    #
-    #     tournament = tournament_data.model_dump(exclude_unset=True)
-    #
-    #     db_tournament = await self.repository.tournaments.update_tournament(
-    #         tournament_id=tournament_id, tournament_data=tournament
-    #     )
-    #     if not db_tournament:
-    #         self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(tournament_id))
-    #         raise TournamentNotFoundException(tournament_id)
-    #     self.logger.info(f"Турнир с ID №{tournament_id} успешно обновлён")
-    #
-    #     return TournamentResponse.model_validate(db_tournament)
-    #
     async def del_athlete_tournament_link(self, athlete_id: int, tournament_id: int) -> bool:
         """Удаление связи о спорсмене-турнире из БД по ID"""
 

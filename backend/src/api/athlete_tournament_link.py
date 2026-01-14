@@ -7,6 +7,17 @@ from backend.src.models.athlete_tournament import AthleteTournamentLinkResponse,
 
 router = APIRouter(prefix="/athlete_tournament_link", tags=["Спортсмен-турнир-связь"])
 
+@router.get("",
+            response_model=list[AthleteTournamentLinkResponse],
+            description="Получение списка всех связей спортсменов-турниров",
+            summary="Get all athletes-tournaments list links")
+async def get_all_athlete_tournament_links(
+        athlete_tournament_link_service: athlete_tournament_link_serviceDP,
+        offset: int = Query(default=0, ge=0, description="Смещение для пагинации"),
+        limit: int = Query(default=50, le=500, description="Лимит записей на страницу"),
+) -> list[AthleteTournamentLinkBase]:
+    return await athlete_tournament_link_service.get_athlete_tournament_links(offset, limit)
+
 @router.post("",
              dependencies=[Depends(get_current_admin)],
              response_model=AthleteTournamentLinkResponse,

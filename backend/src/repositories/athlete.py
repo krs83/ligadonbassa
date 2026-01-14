@@ -1,8 +1,8 @@
 from typing import Any, List
 
-from sqlmodel import asc
+from sqlmodel import asc, desc
 
-from backend.src.models.athlete import Athlete, AthleteAdd
+from backend.src.models.athlete import Athlete, AthleteCreate
 from backend.src.repositories.base import BaseRepository
 
 
@@ -11,26 +11,33 @@ class AthleteRepository(BaseRepository):
     async def get_athletes(self,
                            offset: int | None = None,
                            limit: int | None = None,
-                           order_by=None) -> list[Athlete]:
+                           order_by=None,
+                           is_admin=False) -> list[Athlete]:
 
         if order_by is None:
             order_by = asc(Athlete.place)
 
-
-        result = await self._get_many(
+        return await self._get_many(
             model=Athlete,
+            conditions=None if is_admin else [Athlete.is_active == True],
+            link_model=Athlete.tournaments,
             offset=offset,
             limit=limit,
             order_by=order_by,
-            link_model=Athlete.tournaments,
-            link=True
+            link=True,
         )
-        return result
 
     async def get_athlete_by_id(self, athlete_id: int) -> Athlete:
         return await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
 
-    async def get_athlete_by_conditions(self, athlete_data: AthleteAdd) -> Athlete:
+    async def admin_get_athlete_by_id(self, athlete_id: int) -> Athlete:
+        return await self._get_pk(model=Athlete,
+                                  pk=athlete_id,
+                                  link_model=Athlete.tournaments,
+                                  link=True,
+                                  is_admin=True)
+
+    async def get_athlete_by_conditions(self, athlete_data: AthleteCreate) -> Athlete:
         return await self._get_one(
             Athlete,
             Athlete.fullname == athlete_data.fullname,
@@ -67,13 +74,26 @@ class AthleteRepository(BaseRepository):
             return db_athlete
         return None
 
-    async def delete_athlete(self, athlete_id: int) -> bool:
-        result = await self._delete(Athlete, Athlete.id == athlete_id)
-        await self.session.commit()
-        return result
+    async def soft_delete_athlete(self, athlete_id: int) -> Athlete | None:
+            result = await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
+            if result:
+                result.is_active = False
+                await self.session.commit()
+                return result
+            else:
+                return None
+
+    async def restore_athlete(self, athlete_id: int) -> Athlete | None:
+        result = await self._get_pk(model=Athlete, pk=athlete_id, link_model=Athlete.tournaments, link=True)
+        if result:
+            result.is_active = True
+            await self.session.commit()
+            return result
+        else:
+            return None
 
     async def calculating_place(self) -> None:
-        athletes = await self.get_athletes(order_by=Athlete.points.desc())
+        athletes = await self.get_athletes(order_by=desc(Athlete.points))
 
         for i, athlete in enumerate(athletes, start=1):
             athlete.place = i

@@ -19,7 +19,9 @@ class Tournament(TournamentBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     athletes: list["Athlete"] = Relationship(
-        back_populates="tournaments", link_model=AthleteTournamentLink
+        back_populates="tournaments",
+        link_model=AthleteTournamentLink,
+        sa_relationship_kwargs={"lazy": "selectin"}
     )
 
 class TournamentResponse(TournamentBase):
@@ -32,3 +34,6 @@ class TournamentUpdate(SQLModel):
     title: str | None = None
     smoothcomp_id:int | None = None
     smoothcomp_date: date | None = None
+
+class TournamentPatch(SQLModel):
+    id: int

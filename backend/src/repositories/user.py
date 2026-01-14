@@ -32,5 +32,4 @@ class UserRepository(BaseRepository):
 
     async def delete_user(self, user_id: int) -> bool:
         result = await self._delete(User, User.id == user_id)
-        await self.session.commit()
         return result

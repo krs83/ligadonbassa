@@ -4,7 +4,7 @@ from backend.src.exceptions.base import NotFoundException, ConflictException
 class TournamentNotFoundException(NotFoundException):
     TOURNAMENTNOTFOUNDTEXT = "Турнир с ID №{} не найден"
 
-    def __init__(self, tournament_id: int):
+    def __init__(self, tournament_id: int | list[int]):
         super().__init__(detail=self.TOURNAMENTNOTFOUNDTEXT.format(tournament_id))
 
 
