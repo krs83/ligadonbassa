@@ -88,15 +88,15 @@
           <div class="tournament-header">
             <div class="tournament-title">
               <h6 class="mb-1">{{ tournament.title }}</h6>
-              {% if tournament.smoothcomp_date %}
+              {% if tournament.shaka_date %}
               <small class="text-muted">
                 <i class="fas fa-calendar-alt"></i>
-                {{ tournament.smoothcomp_date.strftime('%d.%m.%Y') }}
+                {{ tournament.shaka_date.strftime('%d.%m.%Y') }}
               </small>
               {% endif %}
             </div>
             <div class="tournament-id">
-              <span class="badge bg-secondary">ID: {{ tournament.smoothcomp_id }}</span>
+              <span class="badge bg-secondary">ID: {{ tournament.shaka_id }}</span>
             </div>
           </div>
         </div>

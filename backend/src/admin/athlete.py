@@ -12,8 +12,8 @@ class AthleteAdmin(ModelView, model=Athlete):
 
     form_ajax_refs = {
         "tournaments":{
-            "fields": ("title", "smoothcomp_date"),
-            "order_by": ("smoothcomp_date",),
+            "fields": ("title", "shaka_date"),
+            "order_by": ("shaka_date",),
         }
     }
 

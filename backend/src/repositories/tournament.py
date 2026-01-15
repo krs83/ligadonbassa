@@ -12,9 +12,9 @@ from backend.src.repositories.base import BaseRepository
 class TournamentRepository(BaseRepository):
 
     async def get_tournaments(self,
-                           offset: int,
-                           limit: int,
-                           order_by=asc(Tournament.smoothcomp_date)) ->list[Tournament]:
+                              offset: int,
+                              limit: int,
+                              order_by=asc(Tournament.shaka_date)) ->list[Tournament]:
 
         result = await self._get_many(
             model=Tournament, offset=offset, limit=limit, order_by=order_by

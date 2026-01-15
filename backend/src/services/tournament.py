@@ -36,8 +36,8 @@ class TournamentService(BaseService):
 
             await self.repository.tournaments.create_tournament(tournament)
         except IntegrityError:
-            self.logger.error(TournamentIntegrityException.TOURNAMENTINTEGRITYTEXT.format(tournament_data.smoothcomp_id))
-            raise TournamentIntegrityException(tournament_data.smoothcomp_id)
+            self.logger.error(TournamentIntegrityException.TOURNAMENTINTEGRITYTEXT.format(tournament_data.shaka_id))
+            raise TournamentIntegrityException(tournament_data.shaka_id)
 
         self.logger.info("Добавлен новый турнир")
 

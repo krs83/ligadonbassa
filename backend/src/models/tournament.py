@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 class TournamentBase(SQLModel):
     title: str = Field(String(50), index=True, nullable=False)
-    smoothcomp_id: int = Field(nullable=False, unique=True)
-    smoothcomp_date: date = Field(sa_column=Column(Date))
+    shaka_id: int = Field(nullable=False, unique=True)
+    shaka_date: date = Field(sa_column=Column(Date))
 
 
 class Tournament(TournamentBase, table=True):
@@ -32,8 +32,8 @@ class TournamentAdd(TournamentBase):
 
 class TournamentUpdate(SQLModel):
     title: str | None = None
-    smoothcomp_id:int | None = None
-    smoothcomp_date: date | None = None
+    shaka_id: int | None = None
+    shaka_date: date | None = None
 
 class TournamentPatch(SQLModel):
     id: int
