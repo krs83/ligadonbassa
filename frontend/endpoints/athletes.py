@@ -5,6 +5,7 @@ from fastapi.routing import APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from backend.src.config import settings
 from backend.src.dependencies import athlete_serviceDP
 from backend.src.exceptions.athlete import AthleteNotFoundException
 
@@ -43,6 +44,8 @@ async def get_all_athletes_html(
             "offset": offset,
             "limit": limit,
             "search_query": search or "",
+            "site_name": settings.SITENAME,
+            "current_year": settings.current_year,
         }
     )
 
@@ -76,6 +79,8 @@ async def get_athlete_detail(
         template,
         {
             "request": request,
-            "athlete": athlete
+            "athlete": athlete,
+            "site_name": settings.SITENAME,
+            "current_year": settings.current_year,
         }
     )

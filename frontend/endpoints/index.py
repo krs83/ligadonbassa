@@ -23,6 +23,7 @@ async def main_page(request: Request,
         {
             "request": request,
             "site_name": settings.SITENAME,
+            "current_year": settings.current_year,
             "header_image": settings.HEADER_IMAGE,
             "ligadonbassa_image_1": settings.LIGADONBASSA_IMAGE_1,
             "ligadonbassa_image_2": settings.LIGADONBASSA_IMAGE_2,

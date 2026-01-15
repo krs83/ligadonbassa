@@ -1,8 +1,31 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="/">
-            <i class="fas fa-trophy"></i> {{site_name}}
+            <i class="fas fa-trophy fa-beat" style="--fa-animation-duration: 2s;"></i>
+            <span class="brand-text">{{site_name}}</span>
         </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link athletes-link"
+                       href="/athletes"
+                       hx-get="/athletes/"
+                       hx-target="main"
+                       hx-push-url="true">
+                        <i class="fas fa-running fa-shake" style="--fa-animation-duration: 3s;"></i>
+                        <span class="nav-link-text">Спортсмены</span>
+                        <span class="link-hover-effect"></span>
+                    </a>
+                </li>
+
+            </ul>
         </div>
     </div>
 </nav>

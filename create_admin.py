@@ -1,5 +1,6 @@
 import asyncio
 
+from sqlalchemy.exc import IntegrityError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from backend.src.config import settings
@@ -24,13 +25,16 @@ async def create_admin():
             "is_admin": True
         }
 
-        extra_data = {"hashed_password": hashed_password}
-        admin_data = User.model_validate(admin, update=extra_data)
+        try:
+            extra_data = {"hashed_password": hashed_password}
+            admin_data = User.model_validate(admin, update=extra_data)
 
+            session.add(admin_data)
+            await session.commit()
+            print(f"✅ Админ создан: {email}")
+        except IntegrityError:
+            print(f"✅ Админ с таким e-mail уже был создан ранее")
 
-        session.add(admin_data)
-        await session.commit()
-        print(f"✅ Админ создан: {email}")
 
 if __name__ == "__main__":
     asyncio.run(create_admin())
