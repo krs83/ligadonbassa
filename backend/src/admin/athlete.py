@@ -4,7 +4,7 @@ from backend.src.models import Athlete
 
 
 class AthleteAdmin(ModelView, model=Athlete):
-    column_list = [Athlete. place, Athlete.fullname, Athlete.category, Athlete.academy, Athlete.affiliation, Athlete.points]
+    column_list = [Athlete. place, Athlete.fullname, Athlete.category, Athlete.academy, Athlete.activity, Athlete.points]
     # form_columns = [Athlete.fullname, Athlete.birth, Athlete.city, Athlete.region,Athlete.points]
 
     form_excluded_columns = [Athlete.id, Athlete.place]
@@ -21,7 +21,7 @@ class AthleteAdmin(ModelView, model=Athlete):
         "fullname": "Фамилия Имя",
         "category": "Категория",
         "academy": "Академия",
-        "affiliation": "Аффилиация",
+        "activity": "Активность",
         "points": "Баллы",
         "place": "Место в рейтинге",
         "tournaments": "Турниры"

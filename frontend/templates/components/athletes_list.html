@@ -7,7 +7,7 @@
       <th>Имя и фамилия</th>
       <th>Категория</th>
       <th>Академия</th>
-      <th>Аффилиация</th>
+      <th>Активность</th>
       <th>Очки</th>
     </tr>
     </thead>
@@ -30,9 +30,9 @@
       </td>
       <td>{{ athlete.category }}</td>
       <td>{{ athlete.academy }}</td>
-      <td>{{ athlete.affiliation }}</td>
+      <td>{{ athlete.activity }}</td>
       <td>
-        <span class="badge bg-primary">{{ athlete.points }}</span>
+        <span class="badge bg-primary">{{ athlete.calc_points }}</span>
       </td>
     </tr>
     {% endfor %}

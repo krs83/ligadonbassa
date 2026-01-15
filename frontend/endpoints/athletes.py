@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import Request, Query
+from fastapi import Request, Query, HTTPException
 from fastapi.routing import APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -25,7 +25,7 @@ async def get_all_athletes_html(
 
 ):
     if search:
-        athletes = await athlete_service.search_athlete_byname(search)
+        athletes = await athlete_service.search_athlete_by_name(search)
     else:
         athletes = await athlete_service.get_athletes(offset, limit)
 
@@ -60,13 +60,9 @@ async def get_athlete_detail(
         athlete = await athlete_service.get_athlete(athlete_id)
     except AthleteNotFoundException:
         # Если атлет не найден, возвращаем на список атлетов
-        return templates.TemplateResponse(
-            "athletes/athletes.html",
-            {
-                "request": request,
-                "athletes": [],
-                "error": f"Атлет с ID {athlete_id} не найден"
-            }
+        raise HTTPException(
+            status_code=404,
+            detail=f"Атлет с ID {athlete_id} не найден"
         )
 
     # Проверяем HTMX запрос

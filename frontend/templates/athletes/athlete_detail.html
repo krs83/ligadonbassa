@@ -39,7 +39,7 @@
                         <div class="col-sm-6">
                             <h5><i class="fas fa-star"></i> Очки</h5>
                             <div class="points-display">
-                                <span class="badge bg-primary fs-4">{{ athlete.points }}</span>
+                                <span class="badge bg-primary fs-4">{{ athlete.calc_points }}</span>
                             </div>
                         </div>
                     </div>
@@ -51,8 +51,8 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <h5><i class="fas fa-map-marker-alt"></i> Аффилиация</h5>
-                            <p class="fs-5">{{ athlete.affiliation }}</p>
+                            <h5><i class="fas fa-map-marker-alt"></i> Активность</h5>
+                            <p class="fs-5">{{ athlete.activity }}</p>
                         </div>
                     </div>
 
@@ -124,7 +124,7 @@
                 <div class="col-md-4">
                     <div class="card text-center bg-light">
                         <div class="card-body">
-                            <h3 class="text-success">{{ athlete.points }}</h3>
+                            <h3 class="text-success">{{ athlete.calc_points }}</h3>
                             <p class="text-muted mb-0">Всего очков</p>
                         </div>
                     </div>

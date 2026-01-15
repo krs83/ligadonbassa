@@ -132,7 +132,7 @@ class AthleteService(BaseService):
                 fullname=athlete_db.fullname,
                 category=athlete_db.category,
                 academy=athlete_db.academy,
-                affiliation=athlete_db.affiliation,
+                activity=athlete_db.activity,
                 points=athlete_db.points,
                 place=athlete_db.place if athlete_db.place is not None else 0,
                 is_active=athlete_db.is_active,

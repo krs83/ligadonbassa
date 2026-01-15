@@ -42,7 +42,7 @@ class AthleteRepository(BaseRepository):
             Athlete,
             Athlete.fullname == athlete_data.fullname,
             Athlete.category == athlete_data.category,
-            Athlete.affiliation == athlete_data.affiliation,
+            Athlete.activity == athlete_data.activity,
         )
 
     async def get_athlete_by_name(self, athlete_data: str) -> Athlete:
@@ -92,10 +92,18 @@ class AthleteRepository(BaseRepository):
         else:
             return None
 
+    async def calculate_points(self) -> None:
+        athletes = await self.get_athletes()
+        for athlete in athletes:
+            athlete.calc_points = athlete.points * athlete.activity
+
+
     async def calculating_place(self) -> None:
-        athletes = await self.get_athletes(order_by=desc(Athlete.points))
+        await self.calculate_points()
+        athletes = await self.get_athletes(order_by=desc(Athlete.calc_points))
 
         for i, athlete in enumerate(athletes, start=1):
             athlete.place = i
 
         await self.session.commit()
+
