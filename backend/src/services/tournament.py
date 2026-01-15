@@ -47,11 +47,15 @@ class TournamentService(BaseService):
     async def part_update_tournament(self, tournament_id: int, tournament_data: TournamentUpdate) -> TournamentResponse:
         """Частичное или полное обновление данных о турнире по ID"""
 
-        tournament = tournament_data.model_dump(exclude_unset=True)
+        try:
+            tournament = tournament_data.model_dump(exclude_unset=True)
 
-        db_tournament = await self.repository.tournaments.update_tournament(
-            tournament_id=tournament_id, tournament_data=tournament
-        )
+            db_tournament = await self.repository.tournaments.update_tournament(
+                tournament_id=tournament_id, tournament_data=tournament
+            )
+        except IntegrityError:
+            self.logger.error(TournamentIntegrityException.TOURNAMENTINTEGRITYTEXT.format(tournament_data.shaka_id))
+            raise TournamentIntegrityException(tournament_data.shaka_id)
         if not db_tournament:
             self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(tournament_id))
             raise TournamentNotFoundException(tournament_id)
