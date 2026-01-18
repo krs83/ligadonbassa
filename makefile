@@ -4,7 +4,7 @@
 IMAGE_NAME = ligadonbassa:1.2.0
 APP_CONTAINER = ligadonbassa-container
 DB_CONTAINER = ligadonbassa-db
-NETWORK = web
+NETWORK = liga
 DOMAIN = ligadonbassa.ru
 
 # ============================================
