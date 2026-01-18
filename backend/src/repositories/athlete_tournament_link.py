@@ -7,10 +7,17 @@ from backend.src.repositories.base import BaseRepository
 
 class AthleteTournamentLinkRepository(BaseRepository):
 
-    async def get_athlete_tournament_links(self,
-                              offset: int,
-                              limit: int,
-                              order_by=asc(AthleteTournamentLink.athlete_id)) ->list[AthleteTournamentLink]:
+    async def get_athlete_tournament_links(self, athlete_id: int) ->list[AthleteTournamentLink]:
+
+        result = await self._get_many(
+            model=AthleteTournamentLink, conditions=[AthleteTournamentLink.athlete_id == athlete_id]
+        )
+        return result
+
+    async def get_all_athlete_tournament_links(self,
+                                               offset: int,
+                                               limit: int,
+                                               order_by=asc(AthleteTournamentLink.athlete_id)) ->list[AthleteTournamentLink]:
 
         result = await self._get_many(
             model=AthleteTournamentLink, offset=offset, limit=limit, order_by=order_by

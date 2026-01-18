@@ -4,7 +4,6 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.src.exceptions.athlete import AthleteNotFoundException
 from backend.src.exceptions.tournament import TournamentNotFoundException
-from backend.src.exceptions.athlete_tournament_link import AthleteTournamentLinkIntegrityException
 from backend.src.models.athlete import (
     AthleteCreate,
     AthleteResponse,
@@ -13,6 +12,7 @@ from backend.src.models.athlete import (
 )
 from backend.src.models.athlete_tournament import AthleteTournamentLinkAdd
 from backend.src.models.tournament import TournamentPatch
+from backend.src.repositories.athlete_tournament_link import AthleteTournamentLinkRepository
 from backend.src.services.base import BaseService
 
 
@@ -75,19 +75,22 @@ class AthleteService(BaseService):
 
         athlete = await self.repository.athletes.create_athlete(athlete)
 
-        try:
-            for t_id in athlete_data.tournament_ids:
 
-                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
-                                                                tournament_id=t_id)
+        for t_id in athlete_data.tournament_ids:
 
+            tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
+                                                            tournament_id=t_id)
+
+            repo = AthleteTournamentLinkRepository(session=self.session)
+            existing = await repo.get_athlete_tournament_links(athlete_id=athlete.id)
+            if not existing:
                 await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
                 await self.repository.athletes.calculating_place()
                 await self.session.refresh(athlete)
-        except IntegrityError:
-            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
-            raise AthleteTournamentLinkIntegrityException()
 
+
+        await self.repository.athletes.calculating_place()
+        await self.session.refresh(athlete)
         self.logger.info("Добавлена новая связь атлет-турнир")
         self.logger.info("Добавлен новый спортсмен")
 
@@ -107,24 +110,29 @@ class AthleteService(BaseService):
 
         await self.repository.athletes.create_few_athletes(athletes)
 
-        try:
-            for athlete_add, athlete_db in zip(athlete_data, athletes):
-                for t_id in athlete_add.tournament_ids:
 
-                    tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
-                                                                tournament_id=t_id)
+        for athlete_add, athlete_db in zip(athlete_data, athletes):
+            for t_id in athlete_add.tournament_ids:
 
+                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
+                                                            tournament_id=t_id)
+
+                repo = AthleteTournamentLinkRepository(session=self.session)
+                existing = await repo.get_athlete_tournament_links(athlete_id=athlete_db.id)
+                if not existing:
                     await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
                     await self.repository.athletes.calculating_place()
 
                     for athlete in athletes:
                         await self.session.refresh(athlete)
                     self.logger.info("Массовое добавление спортсменов")
-        except IntegrityError:
-            self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
-            raise AthleteTournamentLinkIntegrityException()
 
-        self.logger.info("Добавлены новые связи атлет-турнир")
+                await self.repository.athletes.calculating_place()
+
+                for athlete in athletes:
+                    await self.session.refresh(athlete)
+                self.logger.info("Массовое добавление спортсменов")
+                self.logger.info("Добавлены новые связи атлет-турнир")
 
         return [
             AthleteResponse(
@@ -136,6 +144,7 @@ class AthleteService(BaseService):
                 points=athlete_db.points,
                 place=athlete_db.place if athlete_db.place is not None else 0,
                 is_active=athlete_db.is_active,
+                calc_points=athlete_db.calc_points,
                 tournaments=athlete_db.tournaments
             )
             for athlete_add, athlete_db in zip(athlete_data, athletes)
@@ -145,7 +154,7 @@ class AthleteService(BaseService):
         """Частичное или полное обновление данных о спортсмене по его ID"""
 
         athlete = athlete_data.model_dump(exclude_unset=True)
-
+        print(f"{athlete=}")
         db_athlete = await self.repository.athletes.update_athlete(
             athlete_id=athlete_id, athlete_data=athlete
         )

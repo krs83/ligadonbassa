@@ -40,10 +40,7 @@ class AthleteRepository(BaseRepository):
     async def get_athlete_by_conditions(self, athlete_data: AthleteCreate) -> Athlete:
         return await self._get_one(
             Athlete,
-            Athlete.fullname == athlete_data.fullname,
-            Athlete.category == athlete_data.category,
-            Athlete.activity == athlete_data.activity,
-        )
+            Athlete.fullname == athlete_data.fullname)
 
     async def get_athlete_by_name(self, athlete_data: str) -> Athlete:
         return await self._get_many_by_conditions(

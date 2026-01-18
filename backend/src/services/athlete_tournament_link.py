@@ -10,11 +10,17 @@ from backend.src.services.base import BaseService
 
 class AthleteTournamentLinkService(BaseService):
 
-    async def get_athlete_tournament_links(self, offset: int, limit: int) -> list[AthleteTournamentLink]:
+    async def get_all_athlete_tournament_links(self, offset: int, limit: int) -> list[AthleteTournamentLink]:
         """Получение всех связей спортсменов-турниров из БД согласно выборке"""
         self.logger.info("Получен список всех связей спортсменов-турниров из БД согласно выборке")
 
-        return await self.repository.athlete_tournament_links.get_athlete_tournament_links(offset, limit)
+        return await self.repository.athlete_tournament_links.get_all_athlete_tournament_links(offset, limit)
+
+    async def get_athlete_tournament_links(self, athlete_id: int) -> list[AthleteTournamentLink]:
+        """Получение всех связей турниров спортсмена по его ID"""
+        self.logger.info(f"Получен список всех турниров спортсмена по ID {athlete_id}")
+
+        return await self.repository.athlete_tournament_links.get_athlete_tournament_links(athlete_id)
 
     async def create_athlete_tournament_link(self,
                                              athlete_tournament_link_data:
