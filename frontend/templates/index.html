@@ -15,39 +15,10 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;">
-            <div class="position-relative z-2">
-                <p class="lead fs-6 fs-md-5 mb-5 mb-md-6">
-    <span class="badge bg-warning text-dark fs-6 fs-md-5 px-3 px-md-4 py-2">
-        <i class="fas fa-clock me-2"></i>Рейтинг скоро будет запущен!
-    </span>
-                </p>
-                <p class="fs-5 mb-0 opacity-75">
-                    Мы работаем над созданием самой полной базы спортсменов и турниров
-                </p>
-            </div>
         </div>
     </div>
 </div>
 
-<!-- Информационный блок -->
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="alert alert-info border-0 shadow-sm p-4">
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-info-circle fa-2x text-info"></i>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                    <h4 class="alert-heading mb-2">Рейтинговая система в разработке</h4>
-                    <p class="mb-0">
-                        В ближайшее время мы запустим рейтинговую систему для спортсменов Донбасса.
-                        Следите за обновлениями!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Топ-10 спортсменов -->
 <div class="row">
@@ -62,16 +33,6 @@
 
                 {% include "components/search.html" %}
 
-                <div class="alert alert-light border mb-4">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-users text-primary me-3 fa-lg"></i>
-                        <div>
-                            <h5 class="mb-1">База спортсменов</h5>
-                            <p class="mb-0 text-muted">Здесь представлены ведущие спортсмены региона</p>
-                        </div>
-                    </div>
-                </div>
-
                 {% include "components/athletes_list.html" %}
 
                 <!-- Ссылка на полный список -->
@@ -83,10 +44,6 @@
                        hx-push-url="true">
                         <i class="fas fa-list me-2"></i> Полный список спортсменов
                     </a>
-                    <p class="text-muted mt-2 small">
-                        <i class="fas fa-exclamation-circle me-1"></i>
-                        Рейтинговая система начнет работать после полного запуска платформы
-                    </p>
                 </div>
             </div>
         </div>
@@ -105,7 +62,6 @@
                 <p class="card-text text-muted">
                     Объективная и справедливая система рейтинга на основе результатов турниров
                 </p>
-                <span class="badge bg-warning text-dark">Скоро</span>
             </div>
         </div>
     </div>
@@ -186,17 +142,6 @@
                         </div>
                     </a>
                 </div>
-
-            <div class="mt-5 pt-3">
-                <p class="text-muted">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Прошлые и следующие турниры будут учитываться в рейтинговой системе
-                </p>
-                <div class="d-inline-flex align-items-center bg-warning bg-opacity-10 px-4 py-3 rounded-pill">
-                    <i class="fas fa-clock text-warning me-2"></i>
-                    <span class="fw-medium">Рейтинговая система запускается в 2026 году</span>
-                </div>
-            </div>
         </div>
     </div>
 </div>
