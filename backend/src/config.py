@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         return datetime.now().year
 
     #Для локально разработки .env.local, для докера - .env.docker
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.docker")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env.local")
 
 
 settings = Settings()

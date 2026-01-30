@@ -37,7 +37,7 @@ async def add_athlete_tournament_link(
         athlete_tournament_link_service: athlete_tournament_link_serviceDP,
         athlete_tournament_link_data: AthleteTournamentLinkAdd
 ) -> AthleteTournamentLinkBase:
-    return await athlete_tournament_link_service.create_athlete_tournament_link(athlete_tournament_link_data)
+    return await athlete_tournament_link_service.add_to_db_athlete_tournament_link(athlete_tournament_link_data)
 
 
 @router.delete("/{athlete_id}/{tournament_id}",

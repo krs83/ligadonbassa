@@ -1,7 +1,7 @@
 # ============================================
 # CONFIGURATION
 # ============================================
-IMAGE_NAME = ligadonbassa:1.2.11
+IMAGE_NAME = ligadonbassa:1.3.0
 APP_CONTAINER = ligadonbassa-container
 DB_CONTAINER = ligadonbassa-db
 NETWORK = web

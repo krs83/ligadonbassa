@@ -62,32 +62,15 @@ class AthleteService(BaseService):
     async def create_athlete(self, athlete_data: AthleteCreate) -> AthleteResponse:
         """Добавление записи в БД о новом спортсмене"""
 
-        #проверка правильный ли id турнира
-        for t_id in athlete_data.tournament_ids:
-            tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
-            if not tournament:
-                self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
-                raise TournamentNotFoundException(t_id)
-
+        # проверка правильный ли id турнира
+        await self.check_tournament_id(athlete_data)
 
         athletes = await self.find_existing_athlete(athlete_data)
         athlete = athletes[0]
 
         athlete = await self.repository.athletes.create_athlete(athlete)
 
-
-        for t_id in athlete_data.tournament_ids:
-
-            tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete.id,
-                                                            tournament_id=t_id)
-
-            repo = AthleteTournamentLinkRepository(session=self.session)
-            existing = await repo.get_athlete_tournament_links(athlete_id=athlete.id)
-            if not existing:
-                await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
-                await self.repository.athletes.calculating_place()
-                await self.session.refresh(athlete)
-
+        await self.create_athlete_tournament_link(athlete, athlete_data)
 
         await self.repository.athletes.calculating_place()
         await self.session.refresh(athlete)
@@ -98,13 +81,9 @@ class AthleteService(BaseService):
 
     async def create_few_athletes(self, athlete_data: List[AthleteCreate]) -> List[AthleteResponse]:
         """Добавление списка новых спортсменов в БД"""
-        #проверка правильный ли id турнира
+        # проверка правильный ли id турнира
         for data in athlete_data:
-            for t_id in data.tournament_ids:
-                tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
-                if not tournament:
-                    self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
-                    raise TournamentNotFoundException(t_id)
+            await self.check_tournament_id(data)
 
         athletes = await self.find_existing_athlete(athlete_data)
 
@@ -112,27 +91,14 @@ class AthleteService(BaseService):
 
 
         for athlete_add, athlete_db in zip(athlete_data, athletes):
-            for t_id in athlete_add.tournament_ids:
+            await self.create_athlete_tournament_link(athlete_db, athlete_add)
 
-                tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_db.id,
-                                                            tournament_id=t_id)
+            await self.repository.athletes.calculating_place()
 
-                repo = AthleteTournamentLinkRepository(session=self.session)
-                existing = await repo.get_athlete_tournament_links(athlete_id=athlete_db.id)
-                if not existing:
-                    await self.repository.athlete_tournament_links.create_athlete_tournament_link(tournament_link_data)
-                    await self.repository.athletes.calculating_place()
-
-                    for athlete in athletes:
-                        await self.session.refresh(athlete)
-                    self.logger.info("Массовое добавление спортсменов")
-
-                await self.repository.athletes.calculating_place()
-
-                for athlete in athletes:
-                    await self.session.refresh(athlete)
-                self.logger.info("Массовое добавление спортсменов")
-                self.logger.info("Добавлены новые связи атлет-турнир")
+            for athlete in athletes:
+                await self.session.refresh(athlete)
+            self.logger.info("Массовое добавление спортсменов")
+            self.logger.info("Добавлены новые связи атлет-турнир")
 
         return [
             AthleteResponse(
@@ -154,7 +120,6 @@ class AthleteService(BaseService):
         """Частичное или полное обновление данных о спортсмене по его ID"""
 
         athlete = athlete_data.model_dump(exclude_unset=True)
-        print(f"{athlete=}")
         db_athlete = await self.repository.athletes.update_athlete(
             athlete_id=athlete_id, athlete_data=athlete
         )
@@ -175,7 +140,7 @@ class AthleteService(BaseService):
             self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(athlete_data.tournament_ids))
             raise TournamentNotFoundException(athlete_data.tournament_ids)
 
-        #берем данные из БД для показа в AthleteResponse
+        # берем данные из БД для показа в AthleteResponse
         updated_athlete = await self.repository.athletes.get_athlete_by_id(athlete_id)
 
         self.logger.info(f"Спортсмен с ID №{athlete_id} успешно обновлён")
@@ -208,8 +173,9 @@ class AthleteService(BaseService):
 
 
     async def find_existing_athlete(self, athletes_data: AthleteCreate | List[AthleteCreate]) -> List[Athlete]:
-        """Если будет совпадение по имени, ДР и региону, новый спортсмен не добавляется\n
-       Только суммируются баллы\n
+        """Если будет совпадение по имени, новый спортсмен не добавляется\n
+        суммируются баллы\n
+        обновляются категория и активность\n
         В противном случае - добавляется новый спортсмен
         """
 
@@ -223,8 +189,11 @@ class AthleteService(BaseService):
 
             if athlete:
                 athlete.points += athlete_data.points
+                athlete.category = athlete_data.category
+                athlete.activity = athlete_data.activity
                 list_athletes.append(athlete)
-                self.logger.info(f"Баллы спортсмена обновлены - {athlete.points} ")
+                self.logger.info(f"Баллы {athlete.points}({athlete.calc_points}), категория {athlete.category}"
+                                 f" и активность {athlete.activity} спортсмена #{athlete.id} обновлены")
 
             else:
                 new_athlete = Athlete.model_validate(athlete_data)
@@ -232,8 +201,26 @@ class AthleteService(BaseService):
 
         return list_athletes
 
+    async def create_athlete_tournament_link(self,
+                                             athletes: Athlete | list[Athlete],
+                                             athlete_data: AthleteCreate) -> None:
+        for t_id in athlete_data.tournament_ids:
 
+            tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athletes.id,
+                                                            tournament_id=t_id)
 
+            repo = AthleteTournamentLinkRepository(session=self.session)
+            existing = await repo.get_athlete_tournament_links(athlete_id=athletes.id, tournament_id=t_id)
+            if not existing:
+                await self.repository.athlete_tournament_links.add_to_db_athlete_tournament_link(tournament_link_data)
+                await self.repository.athletes.calculating_place()
+                await self.session.refresh(athletes)
 
+    async def check_tournament_id(self, data):
+        for t_id in data.tournament_ids:
+            tournament = await self.repository.tournaments.get_tournament_by_id(t_id)
+            if not tournament:
+                self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
+                raise TournamentNotFoundException(t_id)
 
 

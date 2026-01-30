@@ -92,7 +92,7 @@ class AthleteRepository(BaseRepository):
     async def calculate_points(self) -> None:
         athletes = await self.get_athletes()
         for athlete in athletes:
-            athlete.calc_points = athlete.points * athlete.activity
+            athlete.calc_points = round(athlete.points * athlete.activity, 3)
 
 
     async def calculating_place(self) -> None:

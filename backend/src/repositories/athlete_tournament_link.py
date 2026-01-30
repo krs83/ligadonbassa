@@ -7,10 +7,11 @@ from backend.src.repositories.base import BaseRepository
 
 class AthleteTournamentLinkRepository(BaseRepository):
 
-    async def get_athlete_tournament_links(self, athlete_id: int) ->list[AthleteTournamentLink]:
+    async def get_athlete_tournament_links(self, athlete_id: int, tournament_id: int) ->list[AthleteTournamentLink]:
 
         result = await self._get_many(
-            model=AthleteTournamentLink, conditions=[AthleteTournamentLink.athlete_id == athlete_id]
+            model=AthleteTournamentLink, conditions=[AthleteTournamentLink.athlete_id == athlete_id,
+                                                     AthleteTournamentLink.tournament_id == tournament_id]
         )
         return result
 
@@ -24,8 +25,8 @@ class AthleteTournamentLinkRepository(BaseRepository):
         )
         return result
 
-    async def create_athlete_tournament_link(self,
-                                             athlete_tournament_link_data: AthleteTournamentLinkAdd) -> AthleteTournamentLink:
+    async def add_to_db_athlete_tournament_link(self,
+                                                athlete_tournament_link_data: AthleteTournamentLinkAdd) -> AthleteTournamentLink:
         link = AthleteTournamentLink.model_validate(athlete_tournament_link_data)
         self.session.add(link)
         await self.session.commit()

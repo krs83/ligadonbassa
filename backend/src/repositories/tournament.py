@@ -68,4 +68,4 @@ class TournamentRepository(BaseRepository):
                 tournament_link_data = AthleteTournamentLinkAdd(athlete_id=athlete_id,
                                                                 tournament_id=t_id)
                 repo = AthleteTournamentLinkRepository(session=self.session)
-                await repo.create_athlete_tournament_link(tournament_link_data)
+                await repo.add_to_db_athlete_tournament_link(tournament_link_data)

@@ -30,7 +30,7 @@ class AthleteTournamentLinkService(BaseService):
         try:
             link = AthleteTournamentLink.model_validate(athlete_tournament_link_data)
 
-            await self.repository.athlete_tournament_links.create_athlete_tournament_link(athlete_tournament_link_data)
+            await self.repository.athlete_tournament_links.add_to_db_athlete_tournament_link(athlete_tournament_link_data)
         except IntegrityError:
             self.logger.error(AthleteTournamentLinkIntegrityException.ATHLETETOURNAMENTLINKNOTFOUNDTEXT)
             raise AthleteTournamentLinkIntegrityException()
