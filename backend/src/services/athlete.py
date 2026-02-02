@@ -216,7 +216,6 @@ class AthleteService(BaseService):
             if athlete:
                 athlete.points += athlete_data.points
                 athlete.category = athlete_data.category
-                athlete.activity += Decimal("0.1")
                 list_athletes.append(athlete)
                 self.logger.info(f"Баллы {athlete.points}({athlete.calc_points}), категория {athlete.category}"
                                  f" и активность {athlete.activity} спортсмена #{athlete.id} обновлены")
