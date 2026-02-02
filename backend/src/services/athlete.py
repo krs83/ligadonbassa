@@ -54,7 +54,7 @@ class AthleteService(BaseService):
     async def search_athlete_by_name(self, athlete_data: str) -> Athlete | list:
         """Получение конкретного спортсмена по имени"""
 
-        athlete =  await self.repository.athletes.get_athlete_by_name(athlete_data)
+        athlete =  await self.repository.athletes.get_athletes_by_name(athlete_data)
         if not athlete:
             return []
         self.logger.info(f"Спортсмен с данными \"{athlete_data}\" успешно найден")
@@ -130,16 +130,8 @@ class AthleteService(BaseService):
         await self.repository.athletes.calculating_place()
         await self.session.refresh(db_athlete)
 
-        try:
-            # обновляем список турниров, в котором участвовал спортсмен
-            if athlete_data.tournament_ids:
-                t_ids = [TournamentPatch(id=t_id) for t_id in athlete_data.tournament_ids]
-
-                await self.repository.tournaments.refresh_athletes_tournaments(athlete_id=athlete_id,
-                                                                               tournaments=t_ids)
-        except IntegrityError:
-            self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(athlete_data.tournament_ids))
-            raise TournamentNotFoundException(athlete_data.tournament_ids)
+        # обновляем список турниров, в котором участвовал спортсмен
+        await self.refresh_tournaments_list(athlete_id, athlete_data)
 
         # берем данные из БД для показа в AthleteResponse
         updated_athlete = await self.repository.athletes.get_athlete_by_id(athlete_id)
@@ -171,6 +163,39 @@ class AthleteService(BaseService):
         self.logger.info(f"Спортсмен с ID №{athlete_id} восстановлен и помечен как активный")
 
         return {"message": f"Спортсмен с ID №{athlete_id} восстановлен и помечен как активный"}
+
+    async def bulk_update_athletes(self,
+                                   athletes_id: list[int],
+                                   athlete_data: AthleteUpdate) -> list[AthleteResponse]:
+        """Массовое обновление данных о спортсменах по их ID"""
+        updated_athletes = []
+
+        for a_id in athletes_id:
+            athlete = athlete_data.model_dump(exclude_unset=True)
+            db_athlete = await self.repository.athletes.update_athlete(
+                athlete_id=a_id, athlete_data=athlete
+            )
+            if not db_athlete:
+                self.logger.error(AthleteNotFoundException.ATHLETENOTFOUNDTEXT.format(a_id))
+                raise AthleteNotFoundException(a_id)
+
+
+            # обновляем список турниров, в котором участвовал спортсмен
+            await self.refresh_tournaments_list(a_id, athlete_data)
+
+            # берем данные из БД для показа в AthleteResponse
+            athlete = await self.repository.athletes.get_athlete_by_id(a_id)
+            updated_athletes.append(athlete)
+
+            self.logger.info(f"Спортсмен с ID №{a_id} успешно обновлён")
+
+        await self.repository.athletes.calculating_place()
+        for athlete in updated_athletes:
+            await self.session.refresh(athlete)
+
+
+
+        return [AthleteResponse.model_validate(athlete) for athlete in updated_athletes]
 
 
     async def find_existing_athlete(self, athletes_data: AthleteCreate | List[AthleteCreate]) -> List[Athlete]:
@@ -224,4 +249,13 @@ class AthleteService(BaseService):
                 self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(t_id))
                 raise TournamentNotFoundException(t_id)
 
+    async def refresh_tournaments_list(self, athlete_id:int, athlete_data: AthleteUpdate):
+        try:
+            if athlete_data.tournament_ids:
+                t_ids = [TournamentPatch(id=t_id) for t_id in athlete_data.tournament_ids]
 
+                await self.repository.tournaments.refresh_athletes_tournaments(athlete_id=athlete_id,
+                                                                               tournaments=t_ids)
+        except IntegrityError:
+            self.logger.error(TournamentNotFoundException.TOURNAMENTNOTFOUNDTEXT.format(athlete_data.tournament_ids))
+            raise TournamentNotFoundException(athlete_data.tournament_ids)

@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Query, Depends, Body
 
 from backend.src.dependencies import athlete_serviceDP, get_current_admin
 from backend.src.models.athlete import (
@@ -79,7 +79,7 @@ async def add_athlete(
     return await athlete_service.create_athlete(athlete_data)
 
 
-@router.post("/bulk",
+@router.post("/bulk-create",
              dependencies=[Depends(get_current_admin)],
              response_model=List[AthleteResponse],
              description="Добавление списка записей о спортсменах в БД",
@@ -89,16 +89,17 @@ async def add_few_athletes(
 ) -> List[AthleteResponse]:
     return await athlete_service.create_few_athletes(athlete_data)
 
-
-@router.patch("/{athlete_id}",
+@router.patch("/bulk-update",
               dependencies=[Depends(get_current_admin)],
-              response_model=AthleteResponse,
-              description="Обновление данных о спортсмене по ID",
-              summary="Update athlete by ID")
-async def update_athlete(
-    athlete_service: athlete_serviceDP, athlete_id: int, athlete_data: AthleteUpdate
-) -> AthleteBase:
-    return await athlete_service.part_update_athlete(athlete_id, athlete_data)
+              response_model=list[AthleteResponse],
+              description="Массовое обновление данных о спортсменах по ID",
+              summary="Bulk athletes updates by ID")
+async def bulk_update_athletes(
+        athlete_service: athlete_serviceDP,
+        athletes_id: list[int] = Query(),
+        athlete_data: AthleteUpdate = Body()
+) -> List[AthleteResponse]:
+    return await athlete_service.bulk_update_athletes(athletes_id, athlete_data)
 
 
 @router.delete("/{athlete_id}",
@@ -115,3 +116,14 @@ async def soft_del_athlete(athlete_service: athlete_serviceDP, athlete_id: int) 
                summary="Restore athlete by ID")
 async def restore_athlete(athlete_service: athlete_serviceDP, athlete_id: int) -> dict:
     return await athlete_service.restoring_athlete(athlete_id)
+
+@router.patch("/{athlete_id}",
+              dependencies=[Depends(get_current_admin)],
+              response_model=AthleteResponse,
+              description="Обновление данных о спортсмене по ID",
+              summary="Update athlete by ID")
+async def update_athlete(
+        athlete_service: athlete_serviceDP, athlete_id: int, athlete_data: AthleteUpdate
+) -> AthleteBase:
+    return await athlete_service.part_update_athlete(athlete_id, athlete_data)
+

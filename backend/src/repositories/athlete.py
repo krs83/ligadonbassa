@@ -42,7 +42,7 @@ class AthleteRepository(BaseRepository):
             Athlete,
             Athlete.fullname == athlete_data.fullname)
 
-    async def get_athlete_by_name(self, athlete_data: str) -> Athlete:
+    async def get_athletes_by_name(self, athlete_data: str) -> Athlete:
         return await self._get_many_by_conditions(
             Athlete,
             Athlete.fullname.ilike(f"%{athlete_data}%"),
