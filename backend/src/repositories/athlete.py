@@ -46,6 +46,7 @@ class AthleteRepository(BaseRepository):
         return await self._get_many_by_conditions(
             Athlete,
             Athlete.fullname.ilike(f"%{athlete_data}%"),
+            Athlete.is_active == True
             )
 
     async def create_athlete(self, db_athlete: Athlete) -> Athlete:
