@@ -33,7 +33,7 @@ class Athlete(AthleteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     is_active: bool = Field(default=True)
     place: int | None = Field(default=None)
-    activity: Decimal = Field(default=1.0, nullable=False, decimal_places=1, ge=0.5, le=1.5)
+    activity: Decimal = Field(default=0.9, nullable=False, decimal_places=1, ge=0.5, le=1.5)
     calc_points: float = Field(default=0.0, index=True)
 
     tournaments: list["Tournament"] = Relationship(
